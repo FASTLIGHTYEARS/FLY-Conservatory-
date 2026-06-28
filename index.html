@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>FLY Conservatory — Performance Dossier</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --void:#06060E;
+  --sd:#091C40;
+  --s:#1A3878;
+  --sm:#2455A8;
+  --sb:#3370D4;
+  --g:#C9A84C;
+  --gl:#E0BD72;
+  --gd:#7A6128;
+  --pl:#E4E4EF;
+  --wh:#FFFFFF;
+  --cy:#00CCEE;
+  --gr:#606076;
+  --grl:#9494A8;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{height:-webkit-fill-available}
+html,body{
+  width:100%;min-height:100%;overflow:hidden;
+  background:var(--void);font-family:'DM Sans',sans-serif;
+  color:var(--pl);-webkit-font-smoothing:antialiased;
+}
+
+/* ── DECK ── */
+.deck{
+  position:relative;width:100%;overflow:hidden;
+  height:100vh;height:100dvh;
+  background:var(--void);
+}
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  background:var(--void);
+  opacity:0;transform:translateX(48px);
+  transition:opacity .52s cubic-bezier(.4,0,.2,1),transform .52s cubic-bezier(.4,0,.2,1);
+  pointer-events:none;will-change:opacity,transform;
+}
+.slide.active{opacity:1;transform:none;pointer-events:all;z-index:2}
+.slide.exit{opacity:0;transform:translateX(-48px);z-index:1}
+
+/* ── NAV ── */
+.nav-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:300}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--gr);cursor:pointer;transition:all .3s}
+.dot.on{background:var(--g);box-shadow:0 0 7px var(--g);transform:scale(1.7)}
+.nav-bot{
+  position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));
+  left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:300;
+}
+.nbtn{
+  width:44px;height:44px;border:1px solid var(--gd);background:rgba(6,6,14,.92);
+  color:var(--g);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;backdrop-filter:blur(8px);font-family:inherit;
+}
+.nbtn:hover{border-color:var(--g);background:rgba(201,168,76,.07)}
+.ctr{
+  position:fixed;bottom:calc(28px + env(safe-area-inset-bottom));
+  right:52px;font-family:'Space Mono',monospace;font-size:9px;color:var(--gr);letter-spacing:.1em;z-index:300;
+}
+
+/* ── SLIDE HEADER ── */
+.sh{
+  padding:max(24px, env(safe-area-inset-top)) 68px 18px;
+  border-bottom:1px solid rgba(201,168,76,.1);flex-shrink:0;
+}
+.sh-no{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.22em;color:var(--gr);margin-bottom:5px}
+.sh-t{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:var(--wh);line-height:1;letter-spacing:-.015em}
+.sh-t .g{color:var(--g)}
+.sh-s{font-size:11px;color:var(--grl);margin-top:4px;font-weight:300}
+.sb{flex:1;padding:24px 68px 88px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* ── COVER ── */
+#s0{overflow:hidden;position:relative}
+.cbg{position:absolute;inset:0;pointer-events:none;z-index:0}
+.cglow{position:absolute;right:-60px;top:50%;transform:translateY(-50%);width:520px;height:520px;background:radial-gradient(circle,var(--s) 0%,var(--sd) 44%,transparent 70%);opacity:.55}
+.cline{position:absolute;right:320px;top:0;bottom:0;width:1px;background:linear-gradient(180deg,transparent,var(--gd) 50%,transparent);opacity:.32}
+.ccontent{flex:1;display:flex;flex-direction:column;justify-content:center;padding:60px 80px;padding-top:max(60px, calc(env(safe-area-inset-top) + 40px));position:relative;z-index:1}
+.ctag{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.32em;color:var(--g);margin-bottom:40px;text-transform:uppercase}
+.crule{width:68px;height:1px;background:var(--g);margin-bottom:24px}
+.ctitle{font-family:'Cormorant Garamond',serif;font-size:92px;font-weight:700;line-height:.88;color:var(--wh);letter-spacing:-.02em;margin-bottom:4px}
+.ctitle em{font-style:italic;color:var(--g)}
+.csub{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;font-style:italic;color:var(--grl);margin-bottom:56px}
+.cmeta{display:flex;gap:44px;flex-wrap:wrap}
+.cmeta-i label{display:block;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;color:var(--gr);margin-bottom:3px}
+.cmeta-i span{font-size:12px;color:var(--pl);font-weight:500}
+
+/* ── BLOCK CARDS ── */
+.blocks3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;height:calc(100% - 8px)}
+.bcard{border:1px solid rgba(201,168,76,.18);padding:24px 20px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.bcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--g)}
+.bno{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.28em;color:var(--g);margin-bottom:12px}
+.btime{font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;color:var(--wh);margin-bottom:2px}
+.bname{font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gl);margin-bottom:14px}
+.bmode{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--grl);margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.05)}
+.blist{list-style:none;display:flex;flex-direction:column;gap:7px;flex:1}
+.blist li{font-size:11px;color:var(--grl);padding-left:13px;position:relative;line-height:1.5}
+.blist li::before{content:'—';position:absolute;left:0;color:var(--sb);font-size:9px;top:2px}
+.btag{margin-top:16px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.12em;color:var(--sm)}
+
+/* ── TIMELINE ── */
+.tl{position:relative;padding-left:88px;display:flex;flex-direction:column}
+.tl::before{content:'';position:absolute;left:30px;top:10px;bottom:10px;width:2px;background:linear-gradient(180deg,var(--sb),var(--s))}
+.tl-item{position:relative;padding-bottom:22px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-64px;top:4px;width:13px;height:13px;border-radius:50%;background:var(--sd);border:2px solid var(--g);box-shadow:0 0 11px rgba(51,112,212,.55)}
+.tl-time{font-family:'Space Mono',monospace;font-size:9px;color:var(--g);letter-spacing:.14em;margin-bottom:2px}
+.tl-label{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--wh);margin-bottom:2px}
+.tl-desc{font-size:11px;color:var(--grl);line-height:1.65}
+
+/* ── PASSES ── */
+.passes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pcard{background:rgba(10,28,60,.4);border:1px solid rgba(51,112,212,.2);padding:16px}
+.pno{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.2em;color:var(--cy);margin-bottom:5px}
+.pname{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--wh);margin-bottom:9px}
+.pitems{list-style:none;display:flex;flex-direction:column;gap:4px}
+.pitems li{font-size:10px;color:var(--grl);padding-left:11px;position:relative;line-height:1.5}
+.pitems li::before{content:'·';position:absolute;left:0;color:var(--sb)}
+
+/* ── WEEKLY GRID ── */
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:9px}
+.wcard{border:1px solid rgba(201,168,76,.13);padding:13px 9px}
+.wday{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;color:var(--g);margin-bottom:7px}
+.wsub{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--wh);margin-bottom:5px}
+.wdet{font-size:10px;color:var(--grl);line-height:1.6}
+
+/* ── PRACTICE CARDS ── */
+.prac-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.prac-bot{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.prcard{background:rgba(10,28,60,.25);border:1px solid rgba(51,112,212,.14);padding:16px}
+.prday{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.22em;color:var(--g);margin-bottom:5px}
+.prfocus{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:var(--wh);margin-bottom:7px}
+.probj{font-size:11px;color:var(--grl);line-height:1.6}
+
+/* ── SPLIT 2 ── */
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.shead{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.22em;color:var(--g);margin-bottom:12px}
+.stime{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--wh);margin-bottom:3px}
+.smode{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--grl);margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid rgba(201,168,76,.09)}
+.hr-block{margin-bottom:18px}
+.hr-label{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:.15em;color:var(--sb);margin-bottom:5px}
+.hr-title{font-size:13px;color:var(--pl);font-weight:500;margin-bottom:4px}
+.hr-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.htag{font-family:'Space Mono',monospace;font-size:8px;padding:3px 9px;border:1px solid rgba(51,112,212,.28);color:var(--grl)}
+
+/* ── EQUATION TABLE ── */
+.eqtable{width:100%;border-collapse:collapse}
+.eqtable thead tr{border-bottom:1px solid rgba(201,168,76,.22)}
+.eqtable th{text-align:left;padding:8px 18px;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.22em;color:var(--g)}
+.eqtable td{padding:16px 18px;vertical-align:top;border-bottom:1px solid rgba(255,255,255,.04)}
+.eqtable tr:last-child td{border-bottom:none}
+.eqtype{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--wh)}
+.eqbadge{display:inline-block;font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.1em;padding:2px 9px;border:1px solid var(--sb);color:var(--sb);margin-left:10px;vertical-align:middle}
+.eqdesc{font-size:12px;color:var(--grl);line-height:1.7}
+
+/* ── WEEK CYCLE ── */
+.wcycle{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.wccard{border:1px solid rgba(201,168,76,.13);padding:20px 18px;position:relative;overflow:hidden}
+.wcnum{position:absolute;top:4px;right:12px;font-family:'Cormorant Garamond',serif;font-size:70px;font-weight:700;color:rgba(20,48,110,.55);line-height:1;user-select:none}
+.wcph{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;color:var(--g);margin-bottom:7px}
+.wctitle{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--wh);margin-bottom:7px}
+.wcobj{font-size:11px;color:var(--grl);line-height:1.65}
+
+/* ── ORG CHART ── */
+.org{display:flex;flex-direction:column;align-items:center;gap:0}
+.org-fly{background:linear-gradient(135deg,var(--s),var(--sd));border:1px solid var(--g);padding:14px 44px;text-align:center}
+.org-fly-tag{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.3em;color:var(--g)}
+.org-fly-name{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:700;color:var(--wh);line-height:1}
+.org-connector{width:2px;height:18px;background:var(--gd)}
+.org-human{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;margin-bottom:18px}
+.ohcard{background:rgba(51,112,212,.09);border:1px solid var(--sb);padding:9px 11px;text-align:center}
+.ohcard .otype{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.15em;color:var(--cy);display:block;margin-bottom:3px}
+.ohcard .orole{font-size:11px;color:var(--wh);font-weight:500}
+.org-aos{width:100%;border:1px solid rgba(201,168,76,.22);padding:14px}
+.org-aos-title{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.25em;color:var(--g);text-align:center;margin-bottom:12px}
+.org-agents{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.oaCard{background:rgba(201,168,76,.03);border:1px solid rgba(201,168,76,.11);padding:9px;text-align:center}
+.oaCard .oph{font-family:'Space Mono',monospace;font-size:6px;letter-spacing:.12em;color:var(--gd);display:block;margin-bottom:2px}
+.oaCard .orole{font-size:10px;color:var(--grl)}
+
+/* ── SCORE ── */
+.score-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+.sccard{border:1px solid rgba(201,168,76,.17);padding:18px 12px;text-align:center}
+.scname{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.15em;color:var(--g);display:block;margin-bottom:12px}
+.scring{width:52px;height:52px;border-radius:50%;border:2px solid var(--sb);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.scn{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:var(--wh)}
+.scdesc{font-size:9px;color:var(--gr);line-height:1.6}
+.qs-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.qblock{border-left:2px solid var(--g);padding-left:16px}
+.qlabel{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.2em;color:var(--g);margin-bottom:7px}
+.qtext{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--wh);font-style:italic;line-height:1.4}
+
+/* ── DOCTRINE ── */
+.doc-split{display:grid;grid-template-columns:1fr 1fr;gap:44px}
+.docquote{font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:300;font-style:italic;color:var(--pl);line-height:1.35;margin-bottom:22px}
+.docquote strong{font-style:normal;font-weight:700;color:var(--wh)}
+.docbody{font-size:12px;color:var(--grl);line-height:1.8;margin-bottom:22px}
+.eyebrow{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.26em;color:var(--g);margin-bottom:12px;text-transform:uppercase}
+.phases{list-style:none;display:flex;flex-direction:column;gap:9px}
+.phase{display:flex;gap:14px;align-items:baseline}
+.ph-no{font-family:'Space Mono',monospace;font-size:7px;color:var(--g);letter-spacing:.1em;white-space:nowrap;padding-top:1px}
+.ph-n{font-size:12px;color:var(--pl)}
+.ph-n.dim{color:var(--grl)}
+.divline{display:flex;align-items:center;gap:11px;margin:16px 0}
+.divline span{font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.18em;color:var(--gr);white-space:nowrap}
+.divline hr{flex:1;border:none;border-top:1px solid rgba(255,255,255,.06)}
+.owns{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.own{background:rgba(28,60,128,.08);border:1px solid rgba(28,60,128,.2);padding:9px 11px;font-size:11px;color:var(--pl)}
+
+/* ── UTILITY ── */
+.info-box{padding:16px 20px;border-left:2px solid var(--g);background:rgba(10,28,60,.2);margin-top:20px}
+.info-box p{font-family:'Cormorant Garamond',serif;font-size:14px;font-style:italic;color:var(--pl);line-height:1.7}
+.quiet-box{padding:13px 18px;border:1px solid rgba(255,255,255,.05);margin-top:16px}
+.quiet-box p{font-size:11px;color:var(--grl);line-height:1.75}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .ccontent{padding:40px 24px;padding-top:max(40px, calc(env(safe-area-inset-top) + 24px))}
+  .ctitle{font-size:58px}
+  .sh{padding:max(20px, env(safe-area-inset-top)) 24px 12px}
+  .sb{padding:16px 24px 88px}
+  .sh-t{font-size:30px}
+  .blocks3,.doc-split,.split2{grid-template-columns:1fr}
+  .passes{grid-template-columns:repeat(2,1fr)}
+  .wgrid{grid-template-columns:repeat(4,1fr)}
+  .prac-grid{grid-template-columns:repeat(2,1fr)}
+  .prac-bot{grid-template-columns:repeat(2,1fr)}
+  .wcycle{grid-template-columns:repeat(2,1fr)}
+  .score-row{grid-template-columns:repeat(3,1fr)}
+  .qs-row{grid-template-columns:1fr}
+  .org-human,.org-agents{grid-template-columns:repeat(2,1fr)}
+  .cmeta{gap:20px}
+  .nav-dots{right:8px}
+  .tl{padding-left:64px}
+  .tl-dot{left:-48px}
+}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- ═══════════════ S1 · COVER ═══════════════ -->
+<div class="slide active" id="s0">
+  <div class="cbg"><div class="cglow"></div><div class="cline"></div></div>
+  <div class="ccontent">
+    <div class="ctag">IAMFLY · MUSIC ACADEMY V1 · 2026 · STRATEGIC INTERNAL</div>
+    <div class="crule"></div>
+    <div class="ctitle">FLY<br/><em>Conservatory</em></div>
+    <div class="csub">Performance Execution Dossier</div>
+    <div class="cmeta">
+      <div class="cmeta-i"><label>STRUCTURE</label><span>3 Blocks · 6 Segments</span></div>
+      <div class="cmeta-i"><label>HORIZON</label><span>18–24 Months</span></div>
+      <div class="cmeta-i"><label>FOCUS</label><span>Human Mastery × Agent OS</span></div>
+      <div class="cmeta-i"><label>SLIDES</label><span>12 · Daily + Weekly</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ S2 · DOCTRINE ═══════════════ -->
+<div class="slide" id="s1">
+  <div class="sh">
+    <div class="sh-no">02 / 12 · PHILOSOPHY</div>
+    <div class="sh-t">The <span class="g">Doctrine</span></div>
+    <div class="sh-s">Core operating philosophy — the frame that makes everything else coherent</div>
+  </div>
+  <div class="sb">
+    <div class="doc-split">
+      <div>
+        <p class="docquote">"Human mastery first.<br/><strong>AI leverage second.</strong>"</p>
+        <p class="docbody">The greatest long-term moat isn't an AI that writes songs. It's a musician with world-class taste, performance ability, and creative judgment who can direct increasingly capable AI systems. Irreplaceable skills compound. Operational work automates. That division creates the durable advantage.</p>
+        <div class="eyebrow">PRIMARY · HUMAN-OWNED</div>
+        <ul class="phases">
+          <li class="phase"><span class="ph-no">PHASE I</span><span class="ph-n">Elite Musician Development</span></li>
+          <li class="phase"><span class="ph-no">PHASE II</span><span class="ph-n">World-Class Production</span></li>
+          <li class="phase"><span class="ph-no">PHASE III</span><span class="ph-n">Songwriting</span></li>
+          <li class="phase"><span class="ph-no">PHASE IV</span><span class="ph-n">Performance</span></li>
+          <li class="phase"><span class="ph-no">PHASE V</span><span class="ph-n">Signature Sound</span></li>
+        </ul>
+        <div class="divline"><span>DELEGATED TO AGENT OS</span><hr/></div>
+        <ul class="phases">
+          <li class="phase"><span class="ph-no">PHASE VI</span><span class="ph-n dim">Marketing</span></li>
+          <li class="phase"><span class="ph-no">PHASE VII</span><span class="ph-n dim">Distribution</span></li>
+          <li class="phase"><span class="ph-no">PHASE VIII</span><span class="ph-n dim">Commercialization</span></li>
+          <li class="phase"><span class="ph-no">PHASE IX</span><span class="ph-n dim">Music Holdings</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:12px;">WHAT FLY ALWAYS OWNS</div>
+        <div class="owns">
+          <div class="own">Taste</div><div class="own">Vision</div>
+          <div class="own">Emotion</div><div class="own">Performance</div>
+          <div class="own">Musical Judgment</div><div class="own">Production Decisions</div>
+          <div class="own">Signature Sound</div><div class="own">Artistic Direction</div>
+        </div>
+        <p style="font-size:11px;color:var(--gr);font-style:italic;margin-top:18px;line-height:1.8;">These define FLY. No system replaces them. They compound in value as the agent layer scales below them.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ S3 · THREE BLOCKS ═══════════════ -->
+<div class="slide" id="s2">
+  <div class="sh">
+    <div class="sh-no">03 / 12 · DAILY ARCHITECTURE</div>
+    <div class="sh-t">Three <span class="g">Cognitive Blocks</span></div>
+    <div class="sh-s">Built for a high-performance operator — not a full-time artist. Three naturally distinct cognitive modes.</div>
+  </div>
+  <div class="sb">
+    <div class="blocks3">
+      <div class="bcard">
+        <div class="bno">BLOCK ONE</div>
+        <div class="btime">02:00–04:00</div>
+        <div class="bname">Deep Mastery</div>
+        <div class="bmode">Your highest-value cognitive window. Creation and compounding.</div>
+        <ul class="blist">
+          <li>Command — clarity on today's single objective</li>
+          <li>Sonic Intelligence — one masterpiece, engineered</li>
+          <li>Musical Fluency — foundational vocabulary</li>
+          <li>Deliberate Practice — one discipline, full focus</li>
+          <li>Creation Sprint — apply lesson immediately</li>
+          <li>Daily Brief — document, score, plan forward</li>
+        </ul>
+        <div class="btag">⬤ FLY CONSERVATORY</div>
+      </div>
+      <div class="bcard">
+        <div class="bno">BLOCK TWO</div>
+        <div class="btime">11:00–12:00</div>
+        <div class="bname">Refinement</div>
+        <div class="bmode">Energy is lower. Do not compose. Improve.</div>
+        <ul class="blist">
+          <li>Vocal comping</li>
+          <li>Editing passes</li>
+          <li>Mix revisions</li>
+          <li>Lyric tightening</li>
+          <li>Arrangement tweaks</li>
+          <li>Metadata and IP registry</li>
+          <li>Reference comparison</li>
+        </ul>
+        <div class="btag">◈ EDITOR MODE</div>
+      </div>
+      <div class="bcard">
+        <div class="bno">BLOCK THREE</div>
+        <div class="btime">18:00 Onward</div>
+        <div class="bname">Execution</div>
+        <div class="bmode">Work becomes output. Every session produces leverage.</div>
+        <ul class="blist">
+          <li>Hour 1 — Finish primary song. Nothing else.</li>
+          <li>Hour 2 — Record: vocals, guitar, camera</li>
+          <li>Hour 3 — Content extraction: Reels, Shorts, BTS</li>
+          <li>Final 20 min — Executive Review + scoring</li>
+        </ul>
+        <div class="btag">▲ OUTPUT MODE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ S4 · BLOCK 1 ANATOMY ═══════════════ -->
+<div class="slide" id="s3">
+  <div class="sh">
+    <div class="sh-no">04 / 12 · BLOCK ONE</div>
+    <div class="sh-t">The <span class="g">Conservatory</span> Anatomy</div>
+    <div class="sh-s">Six sequential segments — each feeding the next · 02:00–04:00</div>
+  </div>
+  <div class="sb">
+    <div class="tl">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-time">02:00 — 02:05</div>
+        <div class="tl-label">Command</div>
+        <div class="tl-desc">No DAW. No phone. No social. Review yesterday. Set one measurable objective — not "work on music" but a precision statement. Open only: Notion Music HQ, current song, skill tracker, today's lesson.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-time">02:05 — 02:25</div>
+        <div class="tl-label">Sonic Intelligence</div>
+        <div class="tl-desc">Think like an engineer. One masterpiece only. No playlists. Studio monitors or quality headphones. Six structured listening passes: emotion, arrangement, production, songwriting, mix, FLY translation.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-time">02:25 — 02:50</div>
+        <div class="tl-label">Musical Fluency</div>
+        <div class="tl-desc">No production. Pure fundamentals. Develops musical vocabulary — the underlying mechanics that separate long-term creators from trend followers. Rotating weekly focus: Harmony → Rhythm → Melody → Ear Training → Arrangement → Orchestration → Integration.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-time">02:50 — 03:35</div>
+        <div class="tl-label">Deliberate Practice</div>
+        <div class="tl-desc">Choose ONE discipline. Not five. One objective. One feedback loop. No mixing disciplines. Rotating weekly: Production → Vocals → Songwriting → Mixing → Guitar → Performance → Weakness Day.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-time">03:35 — 03:55</div>
+        <div class="tl-label">Creation Sprint</div>
+        <div class="tl-desc">Everything learned today becomes creation immediately. Apply the lesson. Produce one tangible output: hook, beat sketch, vocal take, chord progression, lyric, arrangement idea. Every session ends with something real.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-time">03:55 — 04:00</div>
+        <div class="tl-label">Daily Brief</div>
+        <div class="tl-desc">Three discoveries. Three improvements. Tomorrow's objective. One system update. One content opportunity. Document. Score. Repeat at a higher standard tomorrow.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ S5 · SONIC INTELLIGENCE ═══════════════ -->
+<div class="slide" id="s4">
+  <div class="sh">
+    <div class="sh-no">05 / 12 · SEGMENT 2</div>
+    <div class="sh-t">Sonic <span class="g">Intelligence</span></div>
+    <div class="sh-s">02:05–02:25 · One masterpiece. Six structured passes. Think like an engineer, not a listener.</div>
+  </div>
+  <div class="sb">
+    <div class="passes">
+      <div class="pcard">
+        <div class="pno">PASS 01</div>
+        <div class="pname">Immersion</div>
+        <ul class="pitems">
+          <li>Eyes closed. Listen. Do nothing. Observe.</li>
+          <li>What emotion does this song produce?</li>
+          <li>Where does tension begin?</li>
+          <li>Where is the release?</li>
+          <li>How does the song breathe?</li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <div class="pno">PASS 02</div>
+        <div class="pname">Arrangement</div>
+        <ul class="pitems">
+          <li>Map the full section timeline</li>
+          <li>Measure every section length</li>
+          <li>Notice structural balance</li>
+          <li>Intro → Verse → Pre → Chorus → Bridge</li>
+          <li>What earns its place? What could vanish?</li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <div class="pno">PASS 03</div>
+        <div class="pname">Production</div>
+        <ul class="pitems">
+          <li>Why this kick? Why this snare?</li>
+          <li>Why this reverb? Why this room?</li>
+          <li>Why mono? Why stereo width here?</li>
+          <li>Why distortion? Why silence?</li>
+          <li>Every choice is intentional — find it</li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <div class="pno">PASS 04</div>
+        <div class="pname">Songwriting</div>
+        <ul class="pitems">
+          <li>Hook, theme, conflict, resolution</li>
+          <li>Imagery and metaphor</li>
+          <li>Cadence and internal rhyme</li>
+          <li>Melodic contour</li>
+          <li>Repetition strategy</li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <div class="pno">PASS 05</div>
+        <div class="pname">Mix</div>
+        <ul class="pitems">
+          <li>EQ and compression behavior</li>
+          <li>Automation and movement</li>
+          <li>Delay and spatial width</li>
+          <li>Depth, punch, and brightness</li>
+          <li>Low-end management and glue</li>
+        </ul>
+      </div>
+      <div class="pcard" style="border-color:rgba(201,168,76,.28);background:rgba(26,56,120,.1)">
+        <div class="pno" style="color:var(--g)">PASS 06</div>
+        <div class="pname">FLY Translation</div>
+        <ul class="pitems">
+          <li>Write three actionable principles</li>
+          <li>Not: "The synth sounds cool"</li>
+          <li>Yes: "Open with sparse instrumentation before introducing rhythmic density"</li>
+          <li>Actionable. Specific. Adopted today.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="quiet-box" style="margin-top:16px"><p>The goal is not enjoyment. It is extraction. Treat every reference like a document — read it six times for six different things.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════ S6 · MUSICAL FLUENCY ═══════════════ -->
+<div class="slide" id="s5">
+  <div class="sh">
+    <div class="sh-no">06 / 12 · SEGMENT 3</div>
+    <div class="sh-t">Musical <span class="g">Fluency</span></div>
+    <div class="sh-s">02:25–02:50 · No production. Pure fundamentals. Weekly rotation — one subject per day.</div>
+  </div>
+  <div class="sb">
+    <div class="wgrid">
+      <div class="wcard">
+        <div class="wday">MON</div>
+        <div class="wsub">Harmony</div>
+        <div class="wdet">Chords · Inversions · Voice leading · Modal interchange · Secondary dominants · Borrowed chords</div>
+      </div>
+      <div class="wcard">
+        <div class="wday">TUE</div>
+        <div class="wsub">Rhythm</div>
+        <div class="wdet">Subdivision · Ghost notes · Syncopation · Polyrhythm · Swing · Afrobeat groove — program and clap</div>
+      </div>
+      <div class="wcard">
+        <div class="wday">WED</div>
+        <div class="wsub">Melody</div>
+        <div class="wdet">Sing — not MIDI · Develop motifs · "Could someone remember this after one listen?"</div>
+      </div>
+      <div class="wcard">
+        <div class="wday">THU</div>
+        <div class="wsub">Ear Training</div>
+        <div class="wdet">Intervals · Chord quality · Bass movement · Drum layers · FX · Stereo placement</div>
+      </div>
+      <div class="wcard">
+        <div class="wday">FRI</div>
+        <div class="wsub">Arrangement</div>
+        <div class="wdet">Take yesterday's beat. Rearrange. Can fewer elements create more impact? Does the bridge earn its place?</div>
+      </div>
+      <div class="wcard">
+        <div class="wday">SAT</div>
+        <div class="wsub">Orchestration</div>
+        <div class="wdet">Five instruments only. Build an entire record. Restrictions create creativity. Constraint is a tool.</div>
+      </div>
+      <div class="wcard" style="border-color:rgba(201,168,76,.3)">
+        <div class="wday" style="color:var(--gl)">SUN</div>
+        <div class="wsub">Integration</div>
+        <div class="wdet">Review everything. Rewrite notes. Highlight recurring principles across the full week.</div>
+      </div>
+    </div>
+    <div class="info-box"><p>These are the underlying mechanics that separate long-term creators from trend followers. Musical vocabulary expands like compound interest. Build it now, direct AI systems with it later.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════ S7 · DELIBERATE PRACTICE ═══════════════ -->
+<div class="slide" id="s6">
+  <div class="sh">
+    <div class="sh-no">07 / 12 · SEGMENT 4</div>
+    <div class="sh-t">Deliberate <span class="g">Practice</span></div>
+    <div class="sh-s">02:50–03:35 · One discipline. One feedback loop. Never mix sessions.</div>
+  </div>
+  <div class="sb">
+    <div class="prac-grid">
+      <div class="prcard">
+        <div class="prday">MONDAY</div>
+        <div class="prfocus">Production</div>
+        <div class="probj">One elite drum groove. Not an entire beat — one groove. Record. Listen. Correct. Repeat until it holds.</div>
+      </div>
+      <div class="prcard">
+        <div class="prday">TUESDAY</div>
+        <div class="prfocus">Vocals</div>
+        <div class="probj">Warmups: breath, pitch, tone, emotion, mic technique. Record. Listen. Correct. Repeat the loop.</div>
+      </div>
+      <div class="prcard">
+        <div class="prday">WEDNESDAY</div>
+        <div class="prfocus">Songwriting</div>
+        <div class="probj">Twenty hooks — quantity first. Then rank. Top three only. Improve them.</div>
+      </div>
+      <div class="prcard">
+        <div class="prday">THURSDAY</div>
+        <div class="prfocus">Mixing</div>
+        <div class="probj">Mix one chorus. Export. Compare to a commercial reference. Document every audible difference.</div>
+      </div>
+    </div>
+    <div class="prac-bot">
+      <div class="prcard">
+        <div class="prday">FRIDAY</div>
+        <div class="prfocus">Guitar</div>
+        <div class="probj">Technique · Timing · Dynamics · Chord transitions · Improvisation. Record. Review. Repeat.</div>
+      </div>
+      <div class="prcard">
+        <div class="prday">SATURDAY</div>
+        <div class="prfocus">Performance</div>
+        <div class="probj">Full song. Standing. Camera rolling. Lights on. Review: eye contact, movement, breathing, confidence. Treat rehearsal like a headline show.</div>
+      </div>
+      <div class="prcard" style="border-color:rgba(201,168,76,.32);">
+        <div class="prday" style="color:var(--gl)">SUNDAY</div>
+        <div class="prfocus">Weakness Day</div>
+        <div class="probj">Find lowest score from the week. Attack only that. Full 45 minutes. Weakness compounds if ignored — address it weekly, without exception.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ S8 · BLOCKS 2 + 3 ═══════════════ -->
+<div class="slide" id="s7">
+  <div class="sh">
+    <div class="sh-no">08 / 12 · BLOCKS 2 + 3</div>
+    <div class="sh-t">Refinement <span class="g">+</span> Execution</div>
+    <div class="sh-s">Mid-day editor mode flows into evening output mode — work becomes leverage</div>
+  </div>
+  <div class="sb">
+    <div class="split2">
+      <div>
+        <div class="shead">BLOCK 2 · REFINEMENT</div>
+        <div class="stime">11:00 — 12:00</div>
+        <div class="smode">Energy is lower. Do not compose. Improve. Think like an editor, not an inventor.</div>
+        <ul class="blist" style="gap:9px">
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Vocal comping</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Editing passes</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Mix revisions</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Lyric tightening</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Arrangement tweaks</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Metadata</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">IP registry</li>
+          <li style="font-size:12px;color:var(--pl);padding-left:14px">Reference comparison</li>
+        </ul>
+      </div>
+      <div>
+        <div class="shead">BLOCK 3 · EXECUTION</div>
+        <div class="stime">18:00 Onward</div>
+        <div class="smode">This is where work becomes output. No new starts without completions.</div>
+        <div class="hr-block">
+          <div class="hr-label">HOUR 1</div>
+          <div class="hr-title">Finish Today's Primary Song</div>
+          <p style="font-size:11px;color:var(--grl)">No starting something else. Completions compound. Fragments don't.</p>
+        </div>
+        <div class="hr-block">
+          <div class="hr-label">HOUR 2</div>
+          <div class="hr-title">Record</div>
+          <div class="hr-tags">
+            <span class="htag">Vocals</span><span class="htag">Guitar</span><span class="htag">Live Takes</span><span class="htag">Camera Performance</span>
+          </div>
+        </div>
+        <div class="hr-block">
+          <div class="hr-label">HOUR 3</div>
+          <div class="hr-title">Content Extraction</div>
+          <div class="hr-tags">
+            <span class="htag">Reels</span><span class="htag">Shorts</span><span class="htag">BTS</span><span class="htag">Studio Clips</span><span class="htag">Philosophy</span><span class="htag">Thumbnails</span>
+          </div>
+          <p style="font-size:10px;color:var(--gr);margin-top:9px;font-style:italic">Content emerges naturally from the work — no separate creative effort required.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ S9 · GROWTH EQUATION ═══════════════ -->
+<div class="slide" id="s8">
+  <div class="sh">
+    <div class="sh-no">09 / 12 · DAILY OUTPUTS</div>
+    <div class="sh-t">The <span class="g">Growth Equation</span></div>
+    <div class="sh-s">Five tangible outputs from every Block 1 session — not practice, production</div>
+  </div>
+  <div class="sb">
+    <table class="eqtable">
+      <thead><tr><th>OUTPUT</th><th>DELIVERABLE</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="eqtype">Knowledge <span class="eqbadge">ARTISTIC</span></div></td>
+          <td><div class="eqdesc">One reverse-engineered song analysis with three transferable principles. Not observations — prescriptions that change how FLY creates from the next session forward.</div></td>
+        </tr>
+        <tr>
+          <td><div class="eqtype">Skill <span class="eqbadge">COMPOUNDING</span></div></td>
+          <td><div class="eqdesc">One measurable improvement in a single musical discipline. Documented, scored, and carried into tomorrow's Command segment as the baseline to exceed.</div></td>
+        </tr>
+        <tr>
+          <td><div class="eqtype">Creative Asset <span class="eqbadge">IP</span></div></td>
+          <td><div class="eqdesc">One new hook, melody, beat, lyric, vocal take, or arrangement idea. Every session expands the IP library. Seeds become catalog. Catalog becomes licensing revenue.</div></td>
+        </tr>
+        <tr>
+          <td><div class="eqtype">System <span class="eqbadge">LEVERAGE</span></div></td>
+          <td><div class="eqdesc">One reusable preset, template, checklist, or documented workflow. Reduces friction permanently. Feeds the Agent OS architecture over time — human discoveries, machine execution.</div></td>
+        </tr>
+        <tr>
+          <td><div class="eqtype">Leverage <span class="eqbadge">MARKETING</span></div></td>
+          <td><div class="eqdesc">One idea for content, marketing, or monetization derived from the session. The creative process is a content production engine. Extract it before the session closes.</div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="info-box"><p>In two hours you're not just practicing. You're simultaneously increasing artistic capability, expanding IP, strengthening the operating system, and creating material that feeds the marketing, commercialization, and business layers. Parallel gains compound far faster than isolation.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════ S10 · SIX-WEEK CYCLE ═══════════════ -->
+<div class="slide" id="s9">
+  <div class="sh">
+    <div class="sh-no">10 / 12 · WEEKLY PROGRESSION</div>
+    <div class="sh-t">Six-Week <span class="g">Ascent Cycle</span></div>
+    <div class="sh-s">One dominant theme per week — each cycle repeats at a higher standard</div>
+  </div>
+  <div class="sb">
+    <div class="wcycle">
+      <div class="wccard">
+        <div class="wcnum">1</div>
+        <div class="wcph">PHASE I · ELITE MUSICIAN</div>
+        <div class="wctitle">Perception</div>
+        <div class="wcobj">Sharpen musical perception and taste. Develop the ear that determines every decision downstream. The most foundational week.</div>
+      </div>
+      <div class="wccard">
+        <div class="wcnum">2</div>
+        <div class="wcph">PHASE II · PRODUCTION</div>
+        <div class="wctitle">Velocity</div>
+        <div class="wcobj">Increase production speed and output quality. Remove friction between concept and completed beat. Build muscle in the DAW.</div>
+      </div>
+      <div class="wccard">
+        <div class="wcnum">3</div>
+        <div class="wcph">PHASE III · SONGWRITING</div>
+        <div class="wctitle">Architecture</div>
+        <div class="wcobj">Write memorable hooks and complete songs. Quantity first, precision second. No unfinished frameworks — close every loop.</div>
+      </div>
+      <div class="wccard">
+        <div class="wcnum">4</div>
+        <div class="wcph">PHASE IV · PERFORMANCE</div>
+        <div class="wctitle">Presence</div>
+        <div class="wcobj">Elevate vocal delivery, guitar, and on-camera performance. Every rehearsal is treated like a headline show — not a warm-up.</div>
+      </div>
+      <div class="wccard">
+        <div class="wcnum">5</div>
+        <div class="wcph">PHASE V · SIGNATURE SOUND</div>
+        <div class="wctitle">Identity</div>
+        <div class="wcobj">Refine FLY's unmistakable sonic identity. The sound that cannot be mistaken for anyone else's. The long-term moat.</div>
+      </div>
+      <div class="wccard" style="border-color:rgba(201,168,76,.32)">
+        <div class="wcnum" style="color:rgba(201,168,76,.18)">6</div>
+        <div class="wcph" style="color:var(--gl)">INTEGRATION</div>
+        <div class="wctitle">Synthesis</div>
+        <div class="wcobj">Build complete records incorporating all five phases. This week produces the deliverable. Then the cycle resets — at a higher baseline.</div>
+      </div>
+    </div>
+    <div class="quiet-box"><p>The cycle repeats. But on re-entry, the baseline is higher. Week 1 of Cycle 2 operates at the ceiling of Cycle 1. Not linear accumulation — recursive elevation. This is how elite musicians are built over 18–24 months.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════ S11 · AGENT OS ═══════════════ -->
+<div class="slide" id="s10">
+  <div class="sh">
+    <div class="sh-no">11 / 12 · LONG-TERM ARCHITECTURE</div>
+    <div class="sh-t">FLY <span class="g">Agent OS</span></div>
+    <div class="sh-s">The end state — human creative energy fully preserved, operations completely automated below it</div>
+  </div>
+  <div class="sb">
+    <div class="org">
+      <div class="org-fly">
+        <div class="org-fly-tag">IAMFLY</div>
+        <div class="org-fly-name">FLY</div>
+      </div>
+      <div class="org-connector"></div>
+      <div class="org-human">
+        <div class="ohcard"><span class="otype">HUMAN · ALWAYS</span><span class="orole">Chief Creative Officer</span></div>
+        <div class="ohcard"><span class="otype">HUMAN · ALWAYS</span><span class="orole">Executive Producer</span></div>
+        <div class="ohcard"><span class="otype">HUMAN · ALWAYS</span><span class="orole">Lead Songwriter</span></div>
+        <div class="ohcard"><span class="otype">HUMAN · ALWAYS</span><span class="orole">Lead Performer</span></div>
+      </div>
+      <div class="org-connector"></div>
+      <div class="org-aos">
+        <div class="org-aos-title">FLY AGENT OS · AUTOMATED OPERATIONS</div>
+        <div class="org-agents">
+          <div class="oaCard"><span class="oph">PHASE VI</span><span class="orole">Marketing Director</span></div>
+          <div class="oaCard"><span class="oph">PHASE VI</span><span class="orole">Content Operations</span></div>
+          <div class="oaCard"><span class="oph">PHASE VII</span><span class="orole">Distribution Manager</span></div>
+          <div class="oaCard"><span class="oph">PHASE VII</span><span class="orole">Publishing Coordinator</span></div>
+          <div class="oaCard"><span class="oph">PHASE VIII</span><span class="orole">Licensing Manager</span></div>
+          <div class="oaCard"><span class="oph">PHASE VIII</span><span class="orole">Revenue Intelligence</span></div>
+          <div class="oaCard"><span class="oph">PHASE IX</span><span class="orole">Business Intelligence</span></div>
+          <div class="oaCard"><span class="oph">PHASE IX</span><span class="orole">Executive Assistant</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="quiet-box" style="margin-top:20px"><p>The long-term goal: creative energy spent almost exclusively on the five human-centric phases, while the operating system handles everything repeatable below. Scale output without diluting the quality or distinctiveness of the FLY brand.</p></div>
+  </div>
+</div>
+
+<!-- ═══════════════ S12 · EXECUTIVE REVIEW ═══════════════ -->
+<div class="slide" id="s11">
+  <div class="sh">
+    <div class="sh-no">12 / 12 · DAILY CLOSE</div>
+    <div class="sh-t">Executive <span class="g">Review</span></div>
+    <div class="sh-s">Final 20 minutes of Block 3 — score without mercy, reflect with precision, plan forward</div>
+  </div>
+  <div class="sb">
+    <div class="score-row">
+      <div class="sccard">
+        <span class="scname">TASTE</span>
+        <div class="scring"><span class="scn">/ 10</span></div>
+        <div class="scdesc">Curation and discernment. The quality of what you choose to create and how you hear the world.</div>
+      </div>
+      <div class="sccard">
+        <span class="scname">PRODUCTION</span>
+        <div class="scring"><span class="scn">/ 10</span></div>
+        <div class="scdesc">Technical execution — sound design, arrangement, mix clarity, and sonic density.</div>
+      </div>
+      <div class="sccard">
+        <span class="scname">WRITING</span>
+        <div class="scring"><span class="scn">/ 10</span></div>
+        <div class="scdesc">Hook strength, lyric memorability, theme cohesion, melodic architecture.</div>
+      </div>
+      <div class="sccard">
+        <span class="scname">PERFORMANCE</span>
+        <div class="scring"><span class="scn">/ 10</span></div>
+        <div class="scdesc">Vocal delivery, presence, camera confidence, emotional authenticity.</div>
+      </div>
+      <div class="sccard" style="border-color:rgba(201,168,76,.35)">
+        <span class="scname" style="color:var(--gl)">SIGNATURE</span>
+        <div class="scring" style="border-color:var(--g)"><span class="scn">/ 10</span></div>
+        <div class="scdesc">Could this only have been made by FLY? The unmistakable identity score.</div>
+      </div>
+    </div>
+    <div class="qs-row">
+      <div class="qblock">
+        <div class="qlabel">QUESTION ONE</div>
+        <div class="qtext">What improved today?</div>
+      </div>
+      <div class="qblock">
+        <div class="qlabel">QUESTION TWO</div>
+        <div class="qtext">What remains weak?</div>
+      </div>
+      <div class="qblock">
+        <div class="qlabel">QUESTION THREE</div>
+        <div class="qtext">What gets attacked tomorrow?</div>
+      </div>
+    </div>
+    <div class="quiet-box" style="margin-top:20px"><p>Weakness compounds if ignored. The honest score — not the aspirational one — is the only number that matters. Score low on Signature Sound twice in a row: reprioritize it in next week's Conservatory block. The system self-corrects when you tell it the truth.</p></div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<div class="nav-dots" id="dots"></div>
+<div class="nav-bot">
+  <button class="nbtn" id="prev">←</button>
+  <button class="nbtn" id="next">→</button>
+</div>
+<div class="ctr" id="ctr"></div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+// Build dots
+const dotsEl = document.getElementById('dots');
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' on' : '');
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+});
+const dots = document.querySelectorAll('.dot');
+
+function update() {
+  dots.forEach((d, i) => d.classList.toggle('on', i === current));
+  document.getElementById('ctr').textContent =
+    String(current + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0');
+}
+
+function go(to) {
+  if (to === current || to < 0 || to >= total) return;
+  const from = current;
+  slides[from].classList.remove('active');
+  slides[from].classList.add('exit');
+  current = to;
+  slides[to].classList.add('active');
+  slides[to].classList.remove('exit');
+  const sb = slides[to].querySelector('.sb');
+  if (sb) sb.scrollTop = 0;
+  setTimeout(() => slides[from].classList.remove('exit'), 580);
+  update();
+}
+
+document.getElementById('prev').addEventListener('click', () => go(current - 1));
+document.getElementById('next').addEventListener('click', () => go(current + 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(current + 1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(current - 1);
+});
+
+// Touch / swipe
+let tx = 0, ty = 0, swiping = false;
+document.addEventListener('touchstart', e => {
+  tx = e.touches[0].clientX;
+  ty = e.touches[0].clientY;
+  swiping = false;
+}, { passive: true });
+document.addEventListener('touchmove', e => {
+  const dx = Math.abs(e.touches[0].clientX - tx);
+  const dy = Math.abs(e.touches[0].clientY - ty);
+  if (dx > dy && dx > 10) swiping = true;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  if (!swiping) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 44) dx < 0 ? go(current + 1) : go(current - 1);
+});
+
+update();
+</script>
+</body>
+</html>
